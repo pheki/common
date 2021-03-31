@@ -50,7 +50,7 @@ script = [
   fn main() {
     // create target specs directory
     let specs_file = std::path::PathBuf::from(env!("TARGET_LINKER_SPECS"));
-    std::fs::create_dir(specs_file.parent().expect("invalid path to specs file"));
+    std::fs::create_dir(specs_file.parent().expect("invalid path to specs file")).ok();
 
     // dump linker specs
     let out = std::process::Command::new(env!("TARGET_LINKER"))
@@ -66,7 +66,7 @@ script = [
       .replace("crt0%O%s", "");
 
     // write to specs_file
-    let x = std::fs::File::create(specs_file)
+    std::fs::File::create(specs_file)
       .expect("could not open specs file")
       .write_all(specs.as_bytes())
       .expect("could not write specs file");
@@ -168,7 +168,7 @@ script = [
 
       // Add files from MANIFEST
       if let Ok(file) = File::open(out_dir.join("MANIFEST")) {
-          let mut reader = ::std::io::BufReader::new(file);
+          let reader = ::std::io::BufReader::new(file);
           let mut lines = reader.lines();
           while let Some(Ok(line)) = lines.next() {
               let p1 = ::std::path::PathBuf::from(line);            // path on FS
