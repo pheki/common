@@ -84,17 +84,13 @@ script = [
     'curl -SsL "${TARGET_JSON_URL}" > "${RUST_TARGET_PATH}/${RUST_TARGET}.json"',
 ]
 
-
-
 ### BUILD ######################################################################
 
 [tasks.xbuild]
-description = "Build the project using `xargo`."
+description = "Build the project using cargo's `build-std` feature."
 dependencies = ["get-target-specs"]
-install_crate = "xargo"
-command = "xargo"
-args = ["build", "--target=armv7-vita-eabihf", "--release", "-vv", "--all-features"]
-
+command = "cargo"
+args = ["build", "-Z", "build-std=core", "--target=${RUST_TARGET}", "--release", "-vv", "--all-features"]
 
 ### DISTRIBUTION TASKS #########################################################
 
