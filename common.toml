@@ -111,7 +111,7 @@ script = [
 description = "Strip the produced ELF executable."
 dependencies = ["elf"]
 command = "arm-vita-eabi-strip"
-args = ["-g", '${CARGO_OUT_DIR}/lib${CARGO_MAKE_CRATE_FS_NAME}.a']
+args = ["-g", '${CARGO_OUT_DIR}/${CARGO_MAKE_CRATE_NAME}.elf']
 
 [tasks.velf]
 description = "Build an VELF executable from the obtained ELF file."
