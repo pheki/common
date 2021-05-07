@@ -10,11 +10,10 @@ TITLE = "Rust Project"
 TITLEID = "RUST00001"
 # Build configuration
 STATIC_DIR = "static"
-CARGO_TARGET_DIR = { script = ["echo ${CARGO_TARGET_DIR:=target}"] }
 RUST_TARGET_PATH = { script = ["echo ${RUST_TARGET_PATH:=$(echo \"$(rustc --print sysroot)/share/targets\")}"]}
 # Compilation specific
 RUST_TARGET = "armv7-vita-eabihf"
-CARGO_OUT_DIR = "${CARGO_TARGET_DIR}/${RUST_TARGET}/release"
+CARGO_OUT_DIR = "${CARGO_MAKE_CRATE_TARGET_DIRECTORY}/${RUST_TARGET}/release"
 TARGET_CC="arm-vita-eabi-gcc"
 TARGET_LINKER = "arm-vita-eabi-gcc"
 TARGET_LINKER_FLAGS = "-Wl,-q"
