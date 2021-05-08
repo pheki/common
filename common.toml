@@ -4,6 +4,34 @@
 # to your project. Set $STATIC_DIR to change the directory for static files:
 # default is `static`.
 
+# Checks for release mode and sets environment variables based on that.
+# IS_RELEASE, CARGO_OUT_DIR and TARGET_LINKER_SPECS are set here.
+env_scripts = [
+'''
+#!@duckscript
+args_array = split ${CARGO_MAKE_TASK_ARGS} ;
+for arg in ${args_array}
+    if not is_empty ${arg}
+        if eq ${arg} "--release"
+            echo arg: "${arg}"
+            set_env IS_RELEASE true
+        end
+    end
+end
+
+is_release = get_env IS_RELEASE
+if not is_empty ${is_release}
+    set_env CARGO_OUT_DIR "${CARGO_MAKE_CRATE_TARGET_DIRECTORY}/${RUST_TARGET}/release"
+else
+    set_env CARGO_OUT_DIR "${CARGO_MAKE_CRATE_TARGET_DIRECTORY}/${RUST_TARGET}/debug"
+end
+
+cargo_out_dir = get_env CARGO_OUT_DIR
+set_env TARGET_LINKER_SPECS "${cargo_out_dir}/specs"
+'''
+]
+
+
 [env]
 # Project information
 TITLE = "Rust Project"
@@ -13,12 +41,9 @@ STATIC_DIR = "static"
 RUST_TARGET_PATH = { script = ["echo ${RUST_TARGET_PATH:=$(echo \"$(rustc --print sysroot)/share/targets\")}"]}
 # Compilation specific
 RUST_TARGET = "armv7-vita-eabihf"
-CARGO_OUT_DIR = "${CARGO_MAKE_CRATE_TARGET_DIRECTORY}/${RUST_TARGET}/release"
 TARGET_CC="arm-vita-eabi-gcc"
 TARGET_LINKER = "arm-vita-eabi-gcc"
 TARGET_LINKER_FLAGS = "-Wl,-q"
-TARGET_LINKER_SPECS = "${CARGO_OUT_DIR}/specs"
-
 
 ### CLEAN ######################################################################
 
@@ -89,7 +114,7 @@ script = [
 description = "Build the project using cargo's `build-std` feature."
 dependencies = ["get-target-specs"]
 command = "cargo"
-args = ["build", "-Z", "build-std=core", "--target=${RUST_TARGET}", "--release", "-vv", "--all-features"]
+args = ["build", "-Z", "build-std=core", "--target=${RUST_TARGET}", "${@}"]
 
 ### DISTRIBUTION TASKS #########################################################
 
@@ -107,8 +132,9 @@ script = [
 ]
 
 [tasks.strip]
-description = "Strip the produced ELF executable."
+description = "Strip the produced ELF executable. Only run with --release."
 dependencies = ["elf"]
+condition = { env_set = [ "IS_RELEASE" ] }
 command = "arm-vita-eabi-strip"
 args = ["-g", '${CARGO_OUT_DIR}/${CARGO_MAKE_CRATE_NAME}.elf']
 
