@@ -105,7 +105,7 @@ condition = { env_set = ["RUST_TARGET_PATH"] }
 condition_script = [ 'test ! -f "${RUST_TARGET_PATH}/${RUST_TARGET}.json"' ]
 script = [
     'mkdir -p "${RUST_TARGET_PATH}"',
-    'curl -SsL "${TARGET_JSON_URL}" > "${RUST_TARGET_PATH}/${RUST_TARGET}.json"',
+    'curl -SsL --fail --create-dirs -o "${RUST_TARGET_PATH}/${RUST_TARGET}.json" "${TARGET_JSON_URL}"',
 ]
 
 ### BUILD ######################################################################
