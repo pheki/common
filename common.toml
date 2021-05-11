@@ -40,7 +40,7 @@ TITLEID = "RUST00001"
 STATIC_DIR = "static"
 RUST_TARGET_PATH = { script = ["echo ${RUST_TARGET_PATH:=$(echo \"$(rustc --print sysroot)/share/targets\")}"]}
 # Compilation specific
-RUST_TARGET = "armv7-vita-eabihf"
+RUST_TARGET = "armv7a-vita-eabihf"
 TARGET_CC="arm-vita-eabi-gcc"
 TARGET_LINKER = "arm-vita-eabi-gcc"
 TARGET_LINKER_FLAGS = "-Wl,-q"
